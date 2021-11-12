@@ -6,7 +6,7 @@ const NOT_FOUND = {
 }
 
 const BAD_REQUEST = {
-  status: 412,
+  status: 400,
   bodyJson: {
     mensagem: 'Bad request'
   }
@@ -19,8 +19,24 @@ const INTERNAL_SERVER_ERROR = {
   }
 }
 
+const UNAUTHORIZED = {
+  status: 401,
+  bodyJson: {
+    mensagem: 'Não autorizado'
+  }
+}
+
+const EMAIL_READY_EXIST = {
+  status: 412,
+  bodyJson: {
+    mensagem: 'Email já existente'
+  }
+}
+
 module.exports = {
   NOT_FOUND,
   BAD_REQUEST,
-  INTERNAL_SERVER_ERROR
+  INTERNAL_SERVER_ERROR,
+  UNAUTHORIZED,
+  EMAIL_READY_EXIST
 }

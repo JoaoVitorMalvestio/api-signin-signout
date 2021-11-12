@@ -1,43 +1,45 @@
-const requestValidator = require('../utils/requestValidator')
-const clock = require('./../utils/clock')
 const RESPONSE_ERROR = require('../models/ResponseError')
-const User = require('./../models/User')
+const UserRepository = require('./../repositories/User')
+const UserModel = require('./../models/User')
 
-async function signUp (bodyJson) {
-  requestValidator.signUp(bodyJson)
+const requestValidator = require('../utils/requestValidator')
+const token = require('../utils/token')
 
-  const user = User.create(bodyJson)
+async function signUp (body) {
+  requestValidator.signUp(body)
 
-  return user
+  let user = UserModel.buildNewUserByRequest(body)
+
+  const [existUser] = await UserRepository.find({ email: user.email })
+
+  if (existUser) { throw RESPONSE_ERROR.EMAIL_READY_EXIST }
+
+  user = await UserRepository.create(user)
+
+  const claim = { id: user._id }
+  const userToken = await token.generateToken(claim, 60)
+
+  await UserRepository.updateOne({ _id: user._id }, { token: userToken })
+
+  const [userResponse] = await UserRepository.find({ email: user.email })
+
+  return userResponse
 }
 
-async function signIn (bodyJson) {
-  requestValidator.signIn(bodyJson)
+async function signIn (body) {
+  requestValidator.signIn(body)
 
-  return bodyJson
+  return body
 }
 
-function buildUser ({ nome, email, senha, telefones, dataCriacao, dataAtualizacao, ultimoLogin, token }) {
-  try {
-    telefones = telefones.map(({ ddd, numero }) => ({ ddd, numero }))
+async function getUser (token) {
+  const { body } = token
 
-    const user = {}
-    user.nome = nome
-    user.email = email
-    user.senha = senha
-    user.telefones = telefones
-    user.dataCriacao = dataCriacao || clock.today()
-    user.dataAtualizacao = dataAtualizacao || clock.today()
-    user.ultimoLogin = ultimoLogin || clock.today()
-    user.token = token || null
-
-    return user
-  } catch (err) {
-    throw RESPONSE_ERROR.INTERNAL_SERVER_ERROR
-  }
+  return body
 }
 
 module.exports = {
   signUp,
-  signIn
+  signIn,
+  getUser
 }

@@ -1,43 +1,25 @@
-const mongoose = require('../repositories/index')
+const clock = require('./../utils/clock')
+const RESPONSE_ERROR = require('../models/ResponseError')
 
-const UserSchema = new mongoose.Schema({
-  nome: {
-    type: String,
-    require: true
-  },
-  email: {
-    type: String,
-    unique: true,
-    require: true,
-    lowercase: true
-  },
-  senha: {
-    type: String,
-    select: false,
-    require: true
-  },
-  telefones: {
-    type: Array,
-    require: true
-  },
-  dataCriacao: {
-    type: String,
-    require: true
-  },
-  dataAtualizacao: {
-    type: String,
-    require: true
-  },
-  ultimoLogin: {
-    type: String,
-    require: true
-  },
-  token: {
-    type: String,
-    require: true
+function buildNewUserByRequest ({ nome, email, senha, telefones }) {
+  try {
+    telefones = telefones.map(({ ddd, numero }) => ({ ddd, numero }))
+
+    const user = {}
+    user.nome = nome
+    user.email = email
+    user.senha = senha
+    user.telefones = telefones
+    user.dataCriacao = clock.today()
+    user.dataAtualizacao = clock.today()
+    user.ultimoLogin = clock.today()
+
+    return user
+  } catch (err) {
+    throw RESPONSE_ERROR.INTERNAL_SERVER_ERROR
   }
-})
+}
 
-const User = mongoose.model('User', UserSchema)
-
-module.exports = User
+module.exports = {
+  buildNewUserByRequest
+}
