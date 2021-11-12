@@ -33,10 +33,18 @@ const EMAIL_READY_EXIST = {
   }
 }
 
+const WRONG_USER_OR_PASSWORD = {
+  status: 401,
+  bodyJson: {
+    mensagem: 'Usuário e/ou senha inválidos'
+  }
+}
+
 module.exports = {
   NOT_FOUND,
   BAD_REQUEST,
   INTERNAL_SERVER_ERROR,
   UNAUTHORIZED,
-  EMAIL_READY_EXIST
+  EMAIL_READY_EXIST,
+  WRONG_USER_OR_PASSWORD
 }

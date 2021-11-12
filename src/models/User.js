@@ -1,7 +1,7 @@
 const clock = require('./../utils/clock')
 const RESPONSE_ERROR = require('../models/ResponseError')
 
-function buildNewUserByRequest ({ nome, email, senha, telefones }) {
+function buildUserByRequest ({ nome, email, senha, telefones }) {
   try {
     telefones = telefones.map(({ ddd, numero }) => ({ ddd, numero }))
 
@@ -21,5 +21,5 @@ function buildNewUserByRequest ({ nome, email, senha, telefones }) {
 }
 
 module.exports = {
-  buildNewUserByRequest
+  buildUserByRequest
 }

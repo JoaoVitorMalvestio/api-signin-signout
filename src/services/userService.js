@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs')
+
 const RESPONSE_ERROR = require('../models/ResponseError')
 const UserRepository = require('./../repositories/User')
 const UserModel = require('./../models/User')
@@ -8,11 +10,9 @@ const token = require('../utils/token')
 async function signUp (body) {
   requestValidator.signUp(body)
 
-  let user = UserModel.buildNewUserByRequest(body)
+  let user = UserModel.buildUserByRequest(body)
 
-  const [existUser] = await UserRepository.find({ email: user.email })
-
-  if (existUser) { throw RESPONSE_ERROR.EMAIL_READY_EXIST }
+  if (await UserRepository.findOne({ email: user.email })) { throw RESPONSE_ERROR.EMAIL_READY_EXIST }
 
   user = await UserRepository.create(user)
 
@@ -28,8 +28,17 @@ async function signUp (body) {
 
 async function signIn (body) {
   requestValidator.signIn(body)
+  const { email, senha } = body
 
-  return body
+  const user = await UserRepository.findOne({ email }).select('+senha')
+
+  if (!user) { throw RESPONSE_ERROR.WRONG_USER_OR_PASSWORD }
+
+  if (!await bcrypt.compare(senha, user.senha)) { throw RESPONSE_ERROR.WRONG_USER_OR_PASSWORD }
+
+  delete user.senha
+
+  return user
 }
 
 async function getUser (token) {
