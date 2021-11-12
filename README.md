@@ -4,6 +4,9 @@
 Desenvolvido na versão do node v14.17.6
 Mongodb 5.0.3
 
+## Pré requisitos
+Possuir mongodb instalado na maquina
+
 ## Como executar
 Para instalar as dependencias basta usar o comando:
 ``num run dev``
