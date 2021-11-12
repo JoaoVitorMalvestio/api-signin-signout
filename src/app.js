@@ -3,7 +3,7 @@ const logger = require('morgan')
 
 const userRouter = require('./routes/user')
 
-const RESPONSE_ERROR = require('./models/responseError')
+const RESPONSE_ERROR = require('./models/ResponseError')
 
 const app = express()
 

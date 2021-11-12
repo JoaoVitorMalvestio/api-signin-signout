@@ -1,11 +1,12 @@
 const requestValidator = require('../utils/requestValidator')
 const clock = require('./../utils/clock')
-const RESPONSE_ERROR = require('./../models/responseError')
+const RESPONSE_ERROR = require('../models/ResponseError')
+const User = require('./../models/User')
 
 async function signUp (bodyJson) {
   requestValidator.signUp(bodyJson)
 
-  const user = buildUser(bodyJson)
+  const user = User.create(bodyJson)
 
   return user
 }

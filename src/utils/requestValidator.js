@@ -1,4 +1,4 @@
-const RESPONSE_ERROR = require('../models/responseError')
+const RESPONSE_ERROR = require('../models/ResponseError')
 
 function signIn ({ email, senha }) {
   if (!email || !senha) { throw RESPONSE_ERROR.BAD_REQUEST }
