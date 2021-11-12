@@ -1,5 +1,5 @@
 const app = require('../src/app')
-const debug = require('debug')('api-signin-signout:server')
+const debug = require('debug')('user-api:server')
 const http = require('http')
 
 const port = normalizePort(process.env.PORT || '3000')

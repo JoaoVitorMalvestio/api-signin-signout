@@ -1,5 +1,5 @@
 {
-  "name": "api-signin-signout",
+  "name": "user-api",
   "version": "0.0.0",
   "private": true,
   "scripts": {
