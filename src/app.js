@@ -1,9 +1,7 @@
 const express = require('express')
 const logger = require('morgan')
 
-const signInRouter = require('./routes/signin')
-const signUpRouter = require('./routes/signup')
-const searchUserRouter = require('./routes/searchuser')
+const userRouter = require('./routes/user')
 
 const RESPONSE_ERROR = require('./models/responseError')
 
@@ -13,9 +11,7 @@ app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 
-app.use('/signin', signInRouter)
-app.use('/signup', signUpRouter)
-app.use('/searchuser', searchUserRouter)
+app.use('/user', userRouter)
 
 app.use(function (req, res, next) {
   res.status(RESPONSE_ERROR.NOT_FOUND.status).send(RESPONSE_ERROR.NOT_FOUND.bodyJson)
