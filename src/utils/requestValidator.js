@@ -10,7 +10,12 @@ function signUp ({ nome, email, senha, telefones }) {
   telefones.forEach(({ ddd, numero }) => { if (!ddd || !numero) { throw RESPONSE_ERROR.BAD_REQUEST } })
 }
 
+function getUser ({ id }) {
+  if (!id) { throw RESPONSE_ERROR.BAD_REQUEST }
+}
+
 module.exports = {
   signIn,
-  signUp
+  signUp,
+  getUser
 }

@@ -8,7 +8,7 @@ const token = require('./../utils/token')
 
 router.get('/', verifyToken, async function (req, res, next) {
   try {
-    const response = await userService.getUser(req.token)
+    const response = await userService.getUser(req.token, req.query)
     res.send(response)
   } catch (error) {
     res.status(error.status).send(error.bodyJson)
@@ -38,10 +38,12 @@ function verifyToken (req, res, next) {
   try {
     const bearerHeader = req.headers.authorization
 
-    if (!bearerHeader) { res.status(RESPONSE_ERROR.UNAUTHORIZED.status).send(RESPONSE_ERROR.UNAUTHORIZED.bodyJson) }
+    if (!bearerHeader) { throw RESPONSE_ERROR.UNAUTHORIZED }
 
     const bearerToken = bearerHeader.split(' ')[1]
-    req.token = token.verifyToken(bearerToken)
+    token.verifyToken(bearerToken)
+
+    req.token = bearerToken
     next()
   } catch (error) {
     finishRequestWithError(res, error)
