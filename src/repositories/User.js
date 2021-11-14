@@ -2,6 +2,12 @@ const mongoose = require('../repositories/index')
 const bcrypt = require('bcryptjs')
 
 const UserSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    unique: true,
+    require: true,
+    lowercase: true
+  },
   nome: {
     type: String,
     require: true
@@ -41,6 +47,7 @@ const UserSchema = new mongoose.Schema({
 
 UserSchema.pre('save', async function (next) {
   this.senha = await bcrypt.hash(this.senha, 10)
+  this.token = await bcrypt.hash(this.token, 10)
 
   next()
 })

@@ -1,11 +1,13 @@
 const clock = require('./../utils/clock')
 const RESPONSE_ERROR = require('../models/ResponseError')
+const { v4: uuidv4 } = require('uuid')
 
 function buildUserByRequest ({ nome, email, senha, telefones }) {
   try {
     telefones = telefones.map(({ ddd, numero }) => ({ ddd, numero }))
 
     const user = {}
+    user.id = uuidv4()
     user.nome = nome
     user.email = email
     user.senha = senha

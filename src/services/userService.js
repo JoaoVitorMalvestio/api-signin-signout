@@ -15,12 +15,18 @@ async function signUp (body) {
 
   if (await UserRepository.findOne({ email: user.email })) { throw RESPONSE_ERROR.EMAIL_READY_EXIST }
 
-  user = await UserRepository.create(user)
-
-  const claim = { id: user._id }
+  const claim = { id: user.id }
   const userToken = await token.generateToken(claim, 60)
+  user.token = userToken
 
-  return UserRepository.findOneAndUpdate({ _id: user._id }, { token: userToken })
+  await UserRepository.create(user)
+
+  const query = { id: user.id }
+
+  user = UserRepository.findOne(query).select(['-_id', '-__v'])
+  user.token = userToken
+
+  return user
 }
 
 async function signIn (body) {
@@ -28,28 +34,43 @@ async function signIn (body) {
 
   const { email, senha } = body
 
-  const user = await UserRepository.findOne({ email }).select('+senha')
+  let user = await UserRepository.findOne({ email }).select(['-_id', '-__v', '+senha'])
 
   if (!user) { throw RESPONSE_ERROR.WRONG_USER_OR_PASSWORD }
 
   if (!await bcrypt.compare(senha, user.senha)) { throw RESPONSE_ERROR.WRONG_USER_OR_PASSWORD }
 
-  const claim = { id: user._id }
+  const claim = { id: user.id }
   const userToken = await token.generateToken(claim, 60)
+
   const today = clock.today()
 
-  return UserRepository.findOneAndUpdate({ _id: user._id }, { token: userToken, ultimoLogin: today })
+  const query = { id: user.id }
+  const updateFields = {
+    token: userToken,
+    ultimoLogin: today
+  }
+
+  UserRepository.updateOne(query, updateFields)
+
+  user.token = userToken
+  user.ultimoLogin = today
+  user.senha = undefined
+
+  return user
 }
 
 async function getUser (token, queryString) {
   requestValidator.getUser(queryString)
   const { id } = queryString
 
-  const user = await UserRepository.findOne({ _id: id })
+  const user = await UserRepository.findOne({ id: id }).select(['-_id', '-__v'])
 
-  if (user.token !== token) { throw RESPONSE_ERROR.UNAUTHORIZED }
+  if (!await bcrypt.compare(token, user.token)) { throw RESPONSE_ERROR.UNAUTHORIZED }
 
-  if (clock.getDateDiffInMinutes(clock.today(user.ultimoLogin)) >= 30) { throw RESPONSE_ERROR.UNAUTHORIZED }
+  if (clock.getDateDiffInMinutes(clock.today(), user.ultimoLogin) >= 30) { throw RESPONSE_ERROR.UNAUTHORIZED }
+
+  user.token = undefined
 
   return user
 }

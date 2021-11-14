@@ -15,7 +15,8 @@
     "moment": "^2.29.1",
     "mongoose": "^6.0.12",
     "morgan": "~1.9.1",
-    "njwt": "^1.1.0"
+    "njwt": "^1.1.0",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "standard": "^16.0.4"
