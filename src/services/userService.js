@@ -23,7 +23,7 @@ async function signUp (body) {
 
   const query = { id: user.id }
 
-  user = UserRepository.findOne(query).select(['-_id', '-__v'])
+  user = await UserRepository.findOne(query).select(['-_id', '-__v'])
   user.token = userToken
 
   return user
@@ -34,7 +34,7 @@ async function signIn (body) {
 
   const { email, senha } = body
 
-  let user = await UserRepository.findOne({ email }).select(['-_id', '-__v', '+senha'])
+  const user = await UserRepository.findOne({ email }).select(['-_id', '-__v', '+senha'])
 
   if (!user) { throw RESPONSE_ERROR.WRONG_USER_OR_PASSWORD }
 
@@ -51,7 +51,7 @@ async function signIn (body) {
     ultimoLogin: today
   }
 
-  UserRepository.updateOne(query, updateFields)
+  await UserRepository.updateOne(query, updateFields)
 
   user.token = userToken
   user.ultimoLogin = today
