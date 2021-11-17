@@ -15,7 +15,15 @@ const signin = {
   senha: 'senha'
 }
 
+const signinWrongPassword = {
+  email: 'email',
+  senha: 'senha1'
+}
+
+
+
 module.exports = {
   signup,
-  signin
+  signin,
+  signinWrongPassword
 }
