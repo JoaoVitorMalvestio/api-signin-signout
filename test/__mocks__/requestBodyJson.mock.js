@@ -10,6 +10,12 @@ const signup = {
   ]
 }
 
+const signin = {
+  email: 'email',
+  senha: 'senha'
+}
+
 module.exports = {
-  signup
+  signup,
+  signin
 }

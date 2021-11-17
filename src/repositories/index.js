@@ -1,19 +1,10 @@
 const mongoose = require('mongoose')
 
-if (process.env.NODE_ENV === 'test') {
-  const Mockgoose = require('mockgoose').Mockgoose
-  const mockgoose = new Mockgoose(mongoose)
+const DB_NAME = process.env.NODE_ENV === 'test' ? 'localtest_mongodb' : 'accenturetest'
 
-  mockgoose.prepareStorage().then(function () {
-    mongoose.connect('mongodb://localhost/accenturetest', function (err) {
-      console.log('connected')
-    })
-  })
-} else {
-  mongoose.connect('mongodb://localhost/accenturetest')
-    .then(() => console.log('Database connected!'))
-    .catch(err => console.log(err))
-}
+mongoose.connect('mongodb://localhost/'.concat(DB_NAME))
+  .then(() => console.log('Database connected!'))
+  .catch(err => console.log(err))
 
 mongoose.Promise = global.Promise
 
